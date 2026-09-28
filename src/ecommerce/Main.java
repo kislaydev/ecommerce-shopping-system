@@ -1,7 +1,7 @@
-package ecomerce;
+package ecommerce;
 
-import ecommerce.model.Customer;
 import ecommerce.model.Admin;
+import ecommerce.model.Customer;
 import ecommerce.model.User;
 
 public class Main {

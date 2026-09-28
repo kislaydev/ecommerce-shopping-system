@@ -1,6 +1,6 @@
 package ecommerce.model;
 
-public class Admin extends User{
+public class Admin extends User {
     public Admin(int userId, String name, String email){
         super(userId, name, email);
     }

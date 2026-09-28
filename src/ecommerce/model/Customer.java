@@ -1,6 +1,6 @@
 package ecommerce.model;
 
-public class Customer extends User{
+public class Customer extends User {
     public Customer(int userId, String name, String email){
         super(userId, name, email);
     }
