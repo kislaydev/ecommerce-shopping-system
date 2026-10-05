@@ -11,6 +11,10 @@ import ecommerce.model.Order;
 import ecommerce.exception.InvalidProductException;
 import ecommerce.exception.InvalidQuantityException;
 
+import ecommerce.model.Payment;
+import ecommerce.model.CardPayment;
+import ecommerce.model.UPIPayment;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -73,8 +77,21 @@ public class Main {
             // Displaying order details
             order.displayOrder();
 
+            // ---------------- PAYMENT TEST ----------------
+
+            System.out.println("\n\n===== PAYMENT TEST =====");
+
+            Payment payment1 = new CardPayment(1001, order.calculateTotal(), "1234567890123456");
+
+            payment1.makePayment();
+
+            Payment payment2 = new UPIPayment(1002, order.calculateTotal(), "riya@upi");
+
+            payment2.makePayment();
+
         } catch (InvalidProductException | InvalidQuantityException e) {
             System.out.println("Error: " + e.getMessage());
         }
+
     }
 }
