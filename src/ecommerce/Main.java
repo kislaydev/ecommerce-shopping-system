@@ -14,6 +14,7 @@ import ecommerce.exception.InvalidQuantityException;
 import ecommerce.model.Payment;
 import ecommerce.model.CardPayment;
 import ecommerce.model.UPIPayment;
+import ecommerce.service.Discount;
 
 public class Main {
 
@@ -88,6 +89,19 @@ public class Main {
             Payment payment2 = new UPIPayment(1002, order.calculateTotal(), "riya@upi");
 
             payment2.makePayment();
+
+            System.out.println("\n===== DISCOUNT TEST =====");
+
+            Discount discount = new Discount(10);
+
+            double orderTotal = order.calculateTotal();
+            double discountAmount = discount.getDiscountAmount(orderTotal);
+            double finalTotal = discount.applyDiscount(orderTotal);
+
+            System.out.println("Order Total: ₹" + orderTotal);
+            System.out.println("Discount: " + discount.getPercentage() + "%");
+            System.out.println("Discount Amount: ₹" + discountAmount);
+            System.out.println("Final Total: ₹" + finalTotal);
 
         } catch (InvalidProductException | InvalidQuantityException e) {
             System.out.println("Error: " + e.getMessage());
