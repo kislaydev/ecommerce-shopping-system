@@ -3,6 +3,9 @@ package ecommerce.service;
 public class Discount {
     private double percentage;
     public Discount(double percentage) {
+        if(percentage < 0 || percentage > 100){
+            throw new IllegalArgumentException("percentage must be between 0 and 100");
+        }
         this.percentage = percentage;
     }
     public double applyDiscount(double total) {
@@ -16,6 +19,9 @@ public class Discount {
         return percentage;
     }
     public void setPercentage(double percentage) {
+        if(percentage < 0 || percentage > 100){
+            throw new IllegalArgumentException("percentage must be between 0 and 100");
+        }
         this.percentage = percentage;
     }
 }

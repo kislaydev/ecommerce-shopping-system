@@ -39,7 +39,6 @@ public class ConsoleMenu {
         int choice;
 
         do {
-
             System.out.println("\n===== E-Commerce Shopping System =====");
             System.out.println("1. View All Products");
             System.out.println("2. Search Product");
@@ -97,11 +96,22 @@ public class ConsoleMenu {
                         System.out.println("Invalid choice. Please try again.");
                 }
 
-            } catch (IOException | InvalidProductException | InvalidQuantityException e) {
+            } catch (IOException e) {
+
+                System.out.println("Error: " + e.getMessage());
+
+            } catch (InvalidProductException e) {
+
+                System.out.println("Error: " + e.getMessage());
+
+            } catch (InvalidQuantityException e) {
 
                 System.out.println("Error: " + e.getMessage());
             }
+            catch (IllegalArgumentException e) {
 
+                System.out.println("Error: " + e.getMessage());
+            }
         } while (choice != 7);
     }
 
@@ -119,7 +129,10 @@ public class ConsoleMenu {
 
         Product selectedProduct = null;
 
-        for (Product product : products) {
+        // Search for the product using its ID.
+        for (int i = 0; i < products.size(); i++) {
+
+            Product product = products.get(i);
 
             if (product.getProductId() == productId) {
                 selectedProduct = product;
@@ -132,6 +145,7 @@ public class ConsoleMenu {
             return;
         }
 
+        // Check whether enough stock is available.
         if (quantity > selectedProduct.getQuantity()) {
             System.out.println("Not enough stock available.");
             return;
@@ -141,12 +155,12 @@ public class ConsoleMenu {
 
         System.out.println(
                 selectedProduct.getProductName()
-                + " added to cart successfully."
+                        + " added to cart successfully."
         );
     }
 
     private void checkout()
-            throws InvalidQuantityException {
+            throws IOException, InvalidProductException, InvalidQuantityException {
 
         ArrayList<CartItem> cartItems = cart.getItems();
 
@@ -157,7 +171,7 @@ public class ConsoleMenu {
 
         System.out.println("\n========== CHECKOUT ==========");
 
-        // Get customer details from user
+        // Get customer details.
         System.out.print("Enter your name: ");
         String name = scanner.nextLine();
 
@@ -170,7 +184,7 @@ public class ConsoleMenu {
                 email
         );
 
-        // Create order
+        // Create a new order.
         Order order = new Order(
                 nextOrderId,
                 customer
@@ -178,8 +192,10 @@ public class ConsoleMenu {
 
         nextOrderId++;
 
-        // Copy cart items into order
-        for (CartItem item : cartItems) {
+        // Add all cart items to the order.
+        for (int i = 0; i < cartItems.size(); i++) {
+
+            CartItem item = cartItems.get(i);
 
             order.addItem(
                     item.getProduct(),
@@ -190,7 +206,7 @@ public class ConsoleMenu {
         System.out.println("\n----- ORDER DETAILS -----");
         order.displayOrder();
 
-        // Apply discount
+        // Apply a 10% discount.
         Discount discount = new Discount(10);
 
         double orderTotal = order.calculateTotal();
@@ -203,7 +219,7 @@ public class ConsoleMenu {
         System.out.println("Discount Amount: ₹" + discountAmount);
         System.out.println("Final Total: ₹" + finalTotal);
 
-        // Select payment method
+        // Select payment method.
         System.out.println("\n----- PAYMENT -----");
         System.out.println("1. Card Payment");
         System.out.println("2. UPI Payment");
@@ -246,10 +262,30 @@ public class ConsoleMenu {
             return;
         }
 
-        // Process payment
+        // Process the payment.
         payment.makePayment();
 
-        // Generate invoice
+        // Get the lastest product list.
+        ArrayList<Product> products = productBrowser.getProducts();
+
+        // Reduce stock after successful payment.
+        for(int i = 0; i < cartItems.size(); i++){
+            CartItem item = cartItems.get(i);
+            for(int j = 0; j < products.size(); j++){
+                Product product = products.get(j);
+                if(product.getProductId() == item.getProduct().getProductId()){
+                    // Reduce the product quantity by the purchased quantity
+                    int newQuantity = product.getQuantity() - item.getQuantity();
+                    product.setQuantity(newQuantity);
+                    break;
+                }
+            }
+        }
+
+        // Save the updated stock to the file
+        productBrowser.saveProducts(products);
+
+        // Generate the invoice.
         Invoice invoice = new Invoice(
                 nextInvoiceId,
                 order,
