@@ -7,10 +7,11 @@ import ecommerce.model.Product;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ProductRepository {
+public class ProductRepository implements ProductDataSource {
 
     private static final String FILE_NAME = "products.txt";
 
+    @Override
     // Save all products.txt to the file
     public void saveProducts(ArrayList<Product> products) throws IOException {
 
@@ -31,6 +32,7 @@ public class ProductRepository {
         FileManager.saveToFile(FILE_NAME, data.toString());
     }
 
+    @Override
     // Load all products.txt from the file
     public ArrayList<Product> loadProducts()
             throws IOException, InvalidProductException {
