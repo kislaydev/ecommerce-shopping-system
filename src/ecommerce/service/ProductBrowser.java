@@ -92,6 +92,13 @@ public class ProductBrowser {
         System.out.println("--------------------------");
     }
 
+    // Get all products for the checkout flow
+    public ArrayList<Product> getProducts()
+            throws IOException, InvalidProductException {
+
+        return productRepository.loadProducts();
+    }
+
     // Display one product
     private void displayProduct(Product product) {
 

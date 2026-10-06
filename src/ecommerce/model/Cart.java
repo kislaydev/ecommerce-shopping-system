@@ -74,4 +74,9 @@ public class Cart {
         System.out.println("-------------------------");
         System.out.println("Total: ₹" + calculateTotal());
     }
+
+    // Used by the checkout flow to access cart items
+    public ArrayList<CartItem> getItems() {
+        return items;
+    }
 }
