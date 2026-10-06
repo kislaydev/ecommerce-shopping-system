@@ -1,0 +1,2 @@
+101|Laptop|50000.0|5|1|Electronics
+102|Mouse|1000.0|10|1|Electronics
