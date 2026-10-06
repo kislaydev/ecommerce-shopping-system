@@ -120,13 +120,9 @@ public class ConsoleMenu {
 
         System.out.print("Enter product ID: ");
         int productId = scanner.nextInt();
-
-        System.out.print("Enter quantity: ");
-        int quantity = scanner.nextInt();
         scanner.nextLine();
 
         ArrayList<Product> products = productBrowser.getProducts();
-
         Product selectedProduct = null;
 
         // Search for the product using its ID.
@@ -145,18 +141,35 @@ public class ConsoleMenu {
             return;
         }
 
-        // Check whether enough stock is available.
-        if (quantity > selectedProduct.getQuantity()) {
-            System.out.println("Not enough stock available.");
-            return;
+        System.out.println("1. Add 1 item");
+        System.out.println("2. Enter quantity");
+        System.out.println("Choose Option: ");
+        int quantityChoice = scanner.nextInt();
+        scanner.nextLine();
+        if(quantityChoice == 1) {
+            //Method overloading
+            //adds exactly 1 item
+            cart.addItem(selectedProduct);
+            System.out.println(selectedProduct.getProductName() + " added to cart successfully.");
         }
+        else if(quantityChoice == 2) {
+            System.out.print("Enter quantity: ");
+            int quantity = scanner.nextInt();
+            scanner.nextLine();
+            // Check whether enough stock is available.
+            if (quantity > selectedProduct.getQuantity()) {
+                System.out.println("Not enough stock available.");
+                return;
+            }
 
-        cart.addItem(selectedProduct, quantity);
-
-        System.out.println(
-                selectedProduct.getProductName()
-                        + " added to cart successfully."
-        );
+            //method overloading
+            //adds specified quantity
+            cart.addItem(selectedProduct, quantity);
+            System.out.println(selectedProduct.getProductName() + " added to cart successfully.");
+        }
+        else{
+            System.out.println("Invalid choice.");
+        }
     }
 
     private void checkout()

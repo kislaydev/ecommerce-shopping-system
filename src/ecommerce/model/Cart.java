@@ -15,6 +15,13 @@ public class Cart {
         items = new ArrayList<CartItem>();
     }
 
+    // Add one item to the cart.
+    // This is method overloading because addItem()
+    // has another version with different parameters.
+    public void addItem(Product product) throws InvalidQuantityException {
+        addItem(product, 1);
+    }
+
     public void addItem(Product product, int quantity) throws InvalidQuantityException {
 
         // Check whether the product is already in the cart.
