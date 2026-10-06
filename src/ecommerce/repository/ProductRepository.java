@@ -11,7 +11,7 @@ public class ProductRepository {
 
     private static final String FILE_NAME = "products.txt";
 
-    // Save all products to the file
+    // Save all products.txt to the file
     public void saveProducts(ArrayList<Product> products) throws IOException {
 
         StringBuilder data = new StringBuilder();
@@ -31,7 +31,7 @@ public class ProductRepository {
         FileManager.saveToFile(FILE_NAME, data.toString());
     }
 
-    // Load all products from the file
+    // Load all products.txt from the file
     public ArrayList<Product> loadProducts()
             throws IOException, InvalidProductException {
 

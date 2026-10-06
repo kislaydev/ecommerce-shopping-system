@@ -99,6 +99,12 @@ public class ProductBrowser {
         return productRepository.loadProducts();
     }
 
+    // Save the updated product list to the file
+    public void saveProducts(ArrayList<Product> products)
+        throws IOException{
+        productRepository.saveProducts(products);
+    }
+
     // Display one product
     private void displayProduct(Product product) {
 

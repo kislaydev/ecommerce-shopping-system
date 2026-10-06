@@ -16,6 +16,24 @@ public class Cart {
     }
 
     public void addItem(Product product, int quantity) throws InvalidQuantityException {
+
+        // Check whether the product is already in the cart.
+        for (int i = 0; i < items.size(); i++) {
+
+            CartItem item = items.get(i);
+
+            if (item.getProduct().getProductId() == product.getProductId()) {
+
+                // If the product already exists, increase its quantity.
+                int newQuantity = item.getQuantity() + quantity;
+
+                item.setQuantity(newQuantity);
+
+                return;
+            }
+        }
+
+        // If the product is not already in the cart, create a new CartItem.
         CartItem item = new CartItem(product, quantity);
         items.add(item);
     }
