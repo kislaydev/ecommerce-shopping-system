@@ -24,4 +24,5 @@ hs_err_pid*
 replay_pid*
 
 #data file
-data/
+data/*
+!data/products.txt
