@@ -101,7 +101,10 @@ public class Cart {
     }
 
     // Used by the checkout flow to access cart items
+    // return a copy of the ArrayList so other classes
+    // can read the cart items but cannot directly
+    // modify the Cart's internal collection
     public ArrayList<CartItem> getItems() {
-        return items;
+        return new ArrayList<CartItem>(items);
     }
 }
