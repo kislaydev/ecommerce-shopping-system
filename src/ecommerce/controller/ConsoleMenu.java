@@ -10,6 +10,7 @@ import ecommerce.model.Order;
 import ecommerce.model.Payment;
 import ecommerce.model.Product;
 import ecommerce.model.UPIPayment;
+import ecommerce.service.AuthenticationService;
 import ecommerce.service.Discount;
 import ecommerce.service.Invoice;
 import ecommerce.service.ProductBrowser;
@@ -23,6 +24,8 @@ public class ConsoleMenu {
     private Scanner scanner;
     private ProductBrowser productBrowser;
     private Cart cart;
+    private AuthenticationService authenticationService;
+    private Customer loggedInCustomer;
 
     private int nextOrderId = 5001;
     private int nextPaymentId = 1001;
@@ -32,92 +35,138 @@ public class ConsoleMenu {
         scanner = new Scanner(System.in);
         productBrowser = new ProductBrowser();
         cart = new Cart();
+        authenticationService = new AuthenticationService();
+        loggedInCustomer = null;
     }
 
     public void start() {
-
         int choice;
-
         do {
             System.out.println("\n===== E-Commerce Shopping System =====");
+            System.out.println("1. Register");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine();
+            try{
+                switch (choice){
+                            case 1:
+                                registerCustomer();
+                                break;
+                            case 2:
+                                loginCustomer();
+                                break;
+                            case 3:
+                                System.out.println("Thank you for using the E-Commerce Shopping System.");
+                                break;
+                            default:
+                                System.out.println("Invalid choice. Please try again.");
+                }
+            }
+            catch (IOException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+            catch (IllegalArgumentException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+        } while (choice != 3);
+    }
+    private void registerCustomer() throws IOException {
+        System.out.println("\n========== REGISTER ==========");
+        System.out.print("Enter your name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter your email: ");
+        String email = scanner.nextLine();
+        System.out.print("Enter your password: ");
+        String password = scanner.nextLine();
+        Customer customer = authenticationService.register(name, email, password);
+        if (customer == null) {
+            System.out.println("An account with this email already exists.");
+            return;
+        }
+        System.out.println("Registration successful.");
+        System.out.println("Your Customer ID: " + customer.getUserId());
+    }
+
+    private void loginCustomer() throws IOException {
+        System.out.println("\n========== LOGIN ==========");
+        System.out.print("Enter your email: ");
+        String email = scanner.nextLine();
+        System.out.print("Enter your password: ");
+        String password = scanner.nextLine();
+        Customer customer = authenticationService.login(email, password);
+        if (customer == null) {
+            System.out.println("Invalid email or password.");
+            return;
+        }
+        loggedInCustomer = customer;
+        cart = new Cart();
+        System.out.println("Login successful. Welcome, " + loggedInCustomer.getName() + "!");
+        customerMenu();
+    }
+    private void customerMenu() {
+        int choice;
+        do {
+            System.out.println("\n===== Customer Menu =====");
             System.out.println("1. View All Products");
             System.out.println("2. Search Product");
             System.out.println("3. Browse by Category");
             System.out.println("4. Add Product to Cart");
             System.out.println("5. View Cart");
             System.out.println("6. Checkout");
-            System.out.println("7. Exit");
+            System.out.println("7. Logout");
             System.out.print("Enter your choice: ");
-
             choice = scanner.nextInt();
             scanner.nextLine();
-
             try {
-
                 switch (choice) {
-
                     case 1:
                         productBrowser.displayAllProducts();
                         break;
-
                     case 2:
                         System.out.print("Enter product name: ");
                         String name = scanner.nextLine();
-
                         productBrowser.searchByName(name);
                         break;
-
                     case 3:
                         System.out.print("Enter category name: ");
                         String category = scanner.nextLine();
-
                         productBrowser.displayByCategory(category);
                         break;
-
                     case 4:
                         addProductToCart();
                         break;
-
                     case 5:
                         cart.viewCart();
                         break;
-
                     case 6:
                         checkout();
                         break;
-
                     case 7:
-                        System.out.println(
-                                "Thank you for using the E-Commerce Shopping System."
-                        );
+                        loggedInCustomer = null;
+                        cart = new Cart();
+                        System.out.println("Logged out successfully.");
                         break;
-
                     default:
                         System.out.println("Invalid choice. Please try again.");
                 }
-
-            } catch (IOException e) {
-
+            }
+            catch (IOException e) {
                 System.out.println("Error: " + e.getMessage());
-
-            } catch (InvalidProductException e) {
-
+            }
+            catch (InvalidProductException e) {
                 System.out.println("Error: " + e.getMessage());
-
-            } catch (InvalidQuantityException e) {
-
+            }
+            catch (InvalidQuantityException e) {
                 System.out.println("Error: " + e.getMessage());
             }
             catch (IllegalArgumentException e) {
-
                 System.out.println("Error: " + e.getMessage());
             }
         } while (choice != 7);
     }
-
-    private void addProductToCart()
-            throws IOException, InvalidProductException, InvalidQuantityException {
-
+    private void addProductToCart() throws IOException, InvalidProductException, InvalidQuantityException {
         System.out.print("Enter product ID: ");
         int productId = scanner.nextInt();
         scanner.nextLine();
@@ -172,9 +221,7 @@ public class ConsoleMenu {
         }
     }
 
-    private void checkout()
-            throws IOException, InvalidProductException, InvalidQuantityException {
-
+    private void checkout() throws IOException, InvalidProductException, InvalidQuantityException {
         ArrayList<CartItem> cartItems = cart.getItems();
 
         if (cartItems.size() == 0) {
@@ -184,25 +231,11 @@ public class ConsoleMenu {
 
         System.out.println("\n========== CHECKOUT ==========");
 
-        // Get customer details.
-        System.out.print("Enter your name: ");
-        String name = scanner.nextLine();
-
-        System.out.print("Enter your email: ");
-        String email = scanner.nextLine();
-
-        Customer customer = new Customer(
-                1,
-                name,
-                email
-        );
+        // Use the customer who is currently logged in
+        Customer customer = loggedInCustomer;
 
         // Create a new order.
-        Order order = new Order(
-                nextOrderId,
-                customer
-        );
-
+        Order order = new Order(nextOrderId, customer);
         nextOrderId++;
 
         // Add all cart items to the order.
@@ -311,5 +344,7 @@ public class ConsoleMenu {
 
         System.out.println("\nCheckout completed successfully.");
         System.out.println("==============================");
+        // Clear the cart after successful checkout
+        cart = new Cart();
     }
 }
