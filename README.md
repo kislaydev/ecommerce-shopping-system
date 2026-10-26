@@ -70,6 +70,15 @@ The project provides a complete shopping workflow including customer registratio
 - Final amount
 - Payment information
 
+### Admin Panel
+
+- Separate admin login
+- View all products
+- Add new products
+- Edit existing products
+- Delete products
+- Persist product changes to the product data file
+
 # How to Run the Project
 
 ## Prerequisites
@@ -140,10 +149,28 @@ If compilation is successful, no compilation errors should be displayed.
 
 ---
 
-## 5. Run the Application
+## 5. Create the Initial Admin Account
+
+Admin accounts cannot be registered through the customer registration option. To create the first admin account, run this command from the project root directory:
+
+```powershell
+java -cp out ecommerce.AdminSetup
+```
+
+Follow the prompts to enter the admin name, email address, and password. The admin credentials are saved separately in `data/admins.txt`, and the password is stored as a hash rather than plain text.
+
+This setup utility creates the initial admin account only if no admin account has been created yet. Keep your admin credentials private.
+
+---
+
+## 6. Run the Application
 
 Start the application using:
 
 ```powershell
 java -cp out ecommerce.Main
 ```
+
+At the main menu, select **Admin Login** and enter the email address and password you entered during admin setup.
+
+After logging in, the admin can view, add, edit, and delete products. Customers can continue to use the customer registration and login options.
